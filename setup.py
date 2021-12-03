@@ -273,8 +273,6 @@ def locationVaccination(message):
     cid = message.chat.id
     with codecs.open('templates/locationVaccination.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
-
-
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
 
 
@@ -501,7 +499,7 @@ def query_handler(call):
         case "7":
             helpCovidInformation_command_handler(call.message)
         case "9":
-            locationVaccinationCoronavac(call.message)
+            locationVaccination(call.message)
         case "menu":
             menu_command_handler(call.message)
         case "Pfizer":
