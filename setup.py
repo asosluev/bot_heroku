@@ -274,14 +274,8 @@ def locationVaccination(message):
     with codecs.open('templates/locationVaccination.html.', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
 
-    markup = types.InlineKeyboardMarkup()
-    markup.row(
-        telebot.types.InlineKeyboardButton(text='Coronavac', callback_data='CoronavacVac'),
-        telebot.types.InlineKeyboardButton(text='Pfizer', callback_data='PfizerVac'),
-        telebot.types.InlineKeyboardButton(text='AstraZeneca ', callback_data='AstraZenecaVac'),
-        telebot.types.InlineKeyboardButton(text='Moderna', callback_data='ModernaVac')
-    )
-    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markup)
+
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
 
 
 def locationVaccinationCoronavac(message):
@@ -357,14 +351,6 @@ def locationVaccinationModerna(message):
     with codecs.open('templates/LocationVaccination/Moderna.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
-
-
-
-
-
-
-
-
 
 
 
