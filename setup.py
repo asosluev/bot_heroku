@@ -80,7 +80,7 @@ def start_command_handler(message):
     markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакты!', callback_data=3))
     markup.add(telebot.types.InlineKeyboardButton(text='🌐Начало!🌐', callback_data=4))
     markup.add(telebot.types.InlineKeyboardButton(text='🔥Covid-19🔥', callback_data=7))
-    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data=8))
+    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data=9))
     markup.add(telebot.types.InlineKeyboardButton(text='📊  Выбор страны!🗺', callback_data=5))
     markup.add(telebot.types.InlineKeyboardButton(text='🧭Отправить геопозицию!', callback_data=6))
     bot.send_message(cid, 'Првиет, {0}, Виберите команду из меню'.format(message.chat.username),reply_markup=markup)
@@ -97,7 +97,7 @@ def menu_command_handler(message):
     markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакты!', callback_data=3))
     markup.add(telebot.types.InlineKeyboardButton(text='🌐Начало!🌐', callback_data=4))
     markup.add(telebot.types.InlineKeyboardButton(text='🔥Covid-19🔥', callback_data=7))
-    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data=8))
+    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data=9))
     markup.add(telebot.types.InlineKeyboardButton(text='📊  Выбор страны!🗺', callback_data=5))
     markup.add(telebot.types.InlineKeyboardButton(text='🧭Отправить геопозицию!', callback_data=6))
     bot.send_message(cid, '{0}, Виберите команду из меню'.format(message.chat.username), reply_markup=markup)
@@ -269,19 +269,19 @@ def helpCovidSymptoms(message):
 
 
 
-def locationVaccination_command_handler(message):
+def locationVaccination(message):
     cid = message.chat.id
     with codecs.open('templates/locationVaccination.html.', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
 
-    markupvac = types.InlineKeyboardMarkup()
-    markupvac.row(
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
         telebot.types.InlineKeyboardButton(text='Coronavac', callback_data='CoronavacVac'),
         telebot.types.InlineKeyboardButton(text='Pfizer', callback_data='PfizerVac'),
         telebot.types.InlineKeyboardButton(text='AstraZeneca ', callback_data='AstraZenecaVac'),
         telebot.types.InlineKeyboardButton(text='Moderna', callback_data='ModernaVac')
     )
-    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markupvac)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markup)
 
 
 def locationVaccinationCoronavac(message):
@@ -514,8 +514,8 @@ def query_handler(call):
             countryLocationSend_command_handler(call.message)
         case "7":
             helpCovidInformation_command_handler(call.message)
-        case "8":
-            locationVaccination_command_handler(call.message)
+        case "9":
+            locationVaccination(call.message)
         case "menu":
             menu_command_handler(call.message)
         case "Pfizer":
