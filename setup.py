@@ -268,9 +268,7 @@ def helpCovidSymptoms(message):
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
 
 
-@bot.message_handler(commands=['locationVaccination'])
-@send_action('typing')
-@save_user_activity()
+
 def locationVaccination_command_handler(message):
     cid = message.chat.id
     with codecs.open('templates/locationVaccination.html.', 'r', encoding='UTF-8') as file:
