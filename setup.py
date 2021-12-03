@@ -501,7 +501,7 @@ def query_handler(call):
         case "7":
             helpCovidInformation_command_handler(call.message)
         case "9":
-            locationVaccination(call.message)
+            locationVaccinationCoronavac(call.message)
         case "menu":
             menu_command_handler(call.message)
         case "Pfizer":
