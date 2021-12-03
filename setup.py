@@ -271,7 +271,7 @@ def helpCovidSymptoms(message):
 
 def locationVaccination(message):
     cid = message.chat.id
-    with codecs.open('templates/locationVaccination.html.', 'r', encoding='UTF-8') as file:
+    with codecs.open('templates/locationVaccination.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
 
 
