@@ -273,14 +273,14 @@ def locationVaccination(message):
     cid = message.chat.id
     with codecs.open('templates/locationVaccination.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
-    markupvac = types.InlineKeyboardMarkup()
-    markupvac.row(
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
         telebot.types.InlineKeyboardButton(text='Coronavac', callback_data='CoronavacVac'),
         telebot.types.InlineKeyboardButton(text='Pfizer', callback_data='PfizerVac'),
         telebot.types.InlineKeyboardButton(text='AstraZeneca ', callback_data='AstraZenecaVac'),
         telebot.types.InlineKeyboardButton(text='Moderna', callback_data='ModernaVac')
     )
-    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markupvac)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markup)
 
 def locationVaccinationCoronavac(message):
     cid = message.chat.id
