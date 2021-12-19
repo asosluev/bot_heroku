@@ -7,17 +7,17 @@ import codecs
 
 import common.tg_analytics as tga
 import country.country
-import vacc.covid
+
 from functools import wraps
 from telebot import types
 from jinja2 import Template
 from services.country_service import CountryService
 from services.statistics_service import StatisticsService
 from flask import Flask, request
-
 #from dotenv import load_dotenv
 
 #load_dotenv()
+
 
 
 # bot initialization
@@ -35,6 +35,8 @@ commands = {'start': 'Запуск бота',
             'countryLocation': 'Вибрати локацію де потрібна інформація по Covid-19',
             'helpcovid': 'Інформація про Covid-19'
             }
+
+
 def get_user_step(uid):
     if uid in user_steps:
         return user_steps[uid]
@@ -73,31 +75,32 @@ def save_user_activity():
 def start_command_handler(message):
     cid = message.chat.id
     markup = telebot.types.InlineKeyboardMarkup()
-    markup.add(telebot.types.InlineKeyboardButton(text='🤷‍♂Допомога!🤷‍♀', callback_data=1))
-    markup.add(telebot.types.InlineKeyboardButton(text='🚨Статистика користувачів!🚨', callback_data=2))
-    markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакти!', callback_data=3))
-    markup.add(telebot.types.InlineKeyboardButton(text='🌐Початок!🌐', callback_data=4))
+    markup.add(telebot.types.InlineKeyboardButton(text='🤷‍♂Помощь!🤷‍♀', callback_data=1))
+    markup.add(telebot.types.InlineKeyboardButton(text='🚨Статистика!🚨', callback_data=2))
+    markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакты!', callback_data=3))
+    markup.add(telebot.types.InlineKeyboardButton(text='🌐Начало!🌐', callback_data=4))
     markup.add(telebot.types.InlineKeyboardButton(text='🔥Covid-19🔥', callback_data=7))
-    markup.add(telebot.types.InlineKeyboardButton(text='🏥Місце для Вакцинации', callback_data=9))
-    markup.add(telebot.types.InlineKeyboardButton(text='📊 Вибір країни!🗺', callback_data=5))
-    markup.add(telebot.types.InlineKeyboardButton(text='🧭Відправти геолокацію!', callback_data=6))
-    bot.send_message(cid, 'Привіт, {0}, Виберіть команду з меню'.format(message.chat.username),reply_markup=markup)
+    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data='vac'))
+    markup.add(telebot.types.InlineKeyboardButton(text='📊  Выбор страны!🗺', callback_data=5))
+    markup.add(telebot.types.InlineKeyboardButton(text='🧭Отправить геопозицию!', callback_data=6))
+    bot.send_message(cid, 'Првиет, {0}, Виберите команду из меню'.format(message.chat.username),reply_markup=markup)
 
 #menu
-
-
+@bot.message_handler(commands=['menu'])
+@send_action('typing')
+@save_user_activity()
 def menu_command_handler(message):
     cid = message.chat.id
     markup = telebot.types.InlineKeyboardMarkup()
-    markup.add(telebot.types.InlineKeyboardButton(text='🤷‍♂Допомога!🤷‍♀', callback_data=1))
-    markup.add(telebot.types.InlineKeyboardButton(text='🚨Статистика користувачів!🚨', callback_data=2))
-    markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакти!', callback_data=3))
-    markup.add(telebot.types.InlineKeyboardButton(text='🌐Початок!🌐', callback_data=4))
+    markup.add(telebot.types.InlineKeyboardButton(text='🤷‍♂Помощь!🤷‍♀', callback_data=1))
+    markup.add(telebot.types.InlineKeyboardButton(text='🚨Статистика!🚨', callback_data=2))
+    markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакты!', callback_data=3))
+    markup.add(telebot.types.InlineKeyboardButton(text='🌐Начало!🌐', callback_data=4))
     markup.add(telebot.types.InlineKeyboardButton(text='🔥Covid-19🔥', callback_data=7))
-    markup.add(telebot.types.InlineKeyboardButton(text='🏥Місце для Вакцинации', callback_data=9))
-    markup.add(telebot.types.InlineKeyboardButton(text='📊 Вибір країни!🗺', callback_data=5))
-    markup.add(telebot.types.InlineKeyboardButton(text='🧭Відправти геолокацію!', callback_data=6))
-    bot.send_message(cid, '{0}, Виберіть команду з меню'.format(message.chat.username), reply_markup=markup)
+    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data='vac'))
+    markup.add(telebot.types.InlineKeyboardButton(text='📊  Выбор страны!🗺', callback_data=5))
+    markup.add(telebot.types.InlineKeyboardButton(text='🧭Отправить геопозицию!', callback_data=6))
+    bot.send_message(cid, '{0}, Виберите команду из меню'.format(message.chat.username), reply_markup=markup)
 
 @bot.message_handler(commands=['country'])
 @send_action('typing')
@@ -107,11 +110,169 @@ def country_command_handler(message):
     user_steps[cid] = 1
     bot.send_message(cid, '{0}, write name of country please'.format(message.chat.username))
 
+# countryLocation command handler
+@bot.message_handler(commands=['countryLocation'])
+@send_action('typing')
+@save_user_activity()
+
+def countryLocation_command_handler(message):
+    cid = message.chat.id
+    user_steps[cid] = 1
+    # bot.py
+    markup = telebot.types.InlineKeyboardMarkup()
+    markup.row(
+        telebot.types.InlineKeyboardButton(text='🗺Країни СНД', callback_data='sng'),
+        telebot.types.InlineKeyboardButton(text='🌍Європа ', callback_data='europe'),
+    )
+    markup.row(
+        telebot.types.InlineKeyboardButton(text='🌏Азія', callback_data='Asia'),
+        telebot.types.InlineKeyboardButton(text='🌍Африка', callback_data='Africa'),
+        #telebot.types.InlineKeyboardButton(text='Антарктида', callback_data='Antarctica'),
+
+    )
+    markup.row(telebot.types.InlineKeyboardButton(text='🌏Австралія і Океанія', callback_data='Australia'))
+
+    markup.row(telebot.types.InlineKeyboardButton(text='↩Назад', callback_data='menu'))
+    bot.send_message(cid, '{0}, Виберіть локацію зі списку по якій потрібна інформація'.format(message.chat.username), reply_markup=markup)
+#SNG
+
+
+@bot.message_handler(commands=['helpCovidInformation'])
+@send_action('typing')
+@save_user_activity()
+def helpCovidInformation_command_handler(message):
+    cid =message.chat.id
+    mkinfo=telebot.types.InlineKeyboardMarkup()
+    mkinfo.row(
+        telebot.types.InlineKeyboardButton(text='Вакцинація', callback_data='vaccination'),
+        telebot.types.InlineKeyboardButton(text='Зони', callback_data='zones'),
+        telebot.types.InlineKeyboardButton(text='Симптоми', callback_data='symptoms')
+    )
+    bot.send_message(cid, '{0}, Виберите команду из меню'.format(message.chat.username), reply_markup=mkinfo)
+
+@bot.message_handler(commands=['helpcovid'])
+@send_action('typing')
+@save_user_activity()
+def helpCovidVaccination_command_handler(message):
+    cid = message.chat.id
+    with codecs.open('templates/helpcovid1.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markup = telebot.types.InlineKeyboardMarkup()
+    markup.row(
+        telebot.types.InlineKeyboardButton(text='Pfizer', callback_data='Pfizer'),
+        telebot.types.InlineKeyboardButton(text='Coronavac', callback_data='Coronavac'),
+        telebot.types.InlineKeyboardButton(text='Moderna', callback_data='Moderna'),
+        telebot.types.InlineKeyboardButton(text='AstraZeneca', callback_data='AstraZeneca')
+    )
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markup)
+
+def helpcovidPfizer_command_handler(message):
+    cid=message.chat.id
+    with codecs.open('templates/helpCovidPfizer.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupurl1 = types.InlineKeyboardMarkup()
+    btn_my_site = types.InlineKeyboardButton(text='Докладніше про вакцину →',
+                                             url='https://vaccination.covid19.gov.ua/articles/pfizer')
+    markupurl1.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markupurl1)
+
+def helpcovidCoronavac_command_handler(message):
+    cid=message.chat.id
+    with codecs.open('templates/helpCovidCoronavac.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupurl2 = types.InlineKeyboardMarkup()
+    btn_my_site = types.InlineKeyboardButton(text='Докладніше про вакцину →',
+                                             url='https://vaccination.covid19.gov.ua/articles/sinovac')
+    markupurl2.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markupurl2)
+
+
+def helpcovidModerna_command_handler(message):
+    cid=message.chat.id
+    with codecs.open('templates/helpCovidModerna.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupurl3 = types.InlineKeyboardMarkup()
+    btn_my_site = types.InlineKeyboardButton(text='Докладніше про вакцину →',
+                                             url='https://vaccination.covid19.gov.ua/articles/moderna')
+    markupurl3.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markupurl3)
+
+
+def helpcovidAstraZeneca_command_handler(message):
+    cid=message.chat.id
+    with codecs.open('templates/helpCovidAstraZeneca.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupurl4 = types.InlineKeyboardMarkup()
+    btn_my_site = types.InlineKeyboardButton(text='Докладніше про вакцину →',
+                                             url='https://vaccination.covid19.gov.ua/articles/astrazeneca')
+    markupurl4.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markupurl4)
+
+def helpCovidVZones_command_handler(message):
+    cid = message.chat.id
+    with codecs.open('templates/covidZones.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+        markuozones=types.InlineKeyboardMarkup()
+        markuozones.row(
+            telebot.types.InlineKeyboardButton(text='Зелений', callback_data='green1'),
+            telebot.types.InlineKeyboardButton(text='Жовтий', callback_data='yellow'),
+            telebot.types.InlineKeyboardButton(text='Помаранчевий ', callback_data='orange'),
+            telebot.types.InlineKeyboardButton(text='Червоний', callback_data='red')
+        )
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=markuozones)
+
+def helpCovidVZonesGreen_command_handler(message):
+    cid = message.chat.id
+    with codecs.open('templates/covidZonesGreen.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupg = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    #btn_my_site=types.KeyboardButton("фото")
+    #markupg.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
+    bot.send_photo(cid, 'https://covid19.gov.ua/images/photo_2021-09-14_16-32-27_2.jpg')
+
+def helpCovidVZonesYellow_command_handler(message):
+    cid = message.chat.id
+    with codecs.open('templates/covidZonesYellow.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupg = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    #btn_my_site=types.KeyboardButton("фото")
+    #markupg.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
+    bot.send_photo(cid, 'https://covid19.gov.ua/images/sources_info/%D0%B6%D0%BE%D0%B2%D1%82%D0%B8%D0%B8%CC%86_%D1%80%D1%96%D0%B2%D0%B5%D0%BD%D1%8C.jpg')
+
+def helpCovidVZonesOrange_command_handler(message):
+    cid = message.chat.id
+    with codecs.open('templates/covidZonesOrange.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupg = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    #btn_my_site=types.KeyboardButton("фото")
+    #markupg.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
+    #bot.send_photo(cid, 'https://covid19.gov.ua/images/sources_info/%D1%80%D1%96%D0%B2%D0%BD%D1%96_%D1%87%D0%B5%D1%80%D0%B2%D0%BE%D0%BD%D0%B8%D0%B8%CC%86.jpg')
+
+def helpCovidVZonesRed_command_handler(message):
+    cid = message.chat.id
+    with codecs.open('templates/covidZonesRed.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    markupg = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    #btn_my_site=types.KeyboardButton("фото")
+    #markupg.add(btn_my_site)
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
+    bot.send_photo(cid, 'https://covid19.gov.ua/images/sources_info/%D1%80%D1%96%D0%B2%D0%BD%D1%96_%D1%87%D0%B5%D1%80%D0%B2%D0%BE%D0%BD%D0%B8%D0%B8%CC%86.jpg')
+
+def helpCovidSymptoms(message):
+    cid = message.chat.id
+    with codecs.open('templates/symptoms.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
+
+
+
 def locationVaccination(message):
     cid = message.chat.id
     with codecs.open('templates/locationVaccination.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
-
     markup = types.InlineKeyboardMarkup()
     markup.row(
         telebot.types.InlineKeyboardButton(text='Coronavac', callback_data='CoronavacVac'),
@@ -147,10 +308,6 @@ def locationVaccinationCoronavac(message):
                                            url='https://goo.gl/maps/MdBnwuApFYrDg1WH7'),
 
     )
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='↩Повернутися', callback_data='nazadvacc'),
-        telebot.types.InlineKeyboardButton(text='📲Меню', callback_data='menu')
-    )
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markupVacUrl)
 
 def locationVaccinationPfizer(message):
@@ -185,63 +342,26 @@ def locationVaccinationPfizer(message):
                                            url='https://goo.gl/maps/MdBnwuApFYrDg1WH7'),
 
     )
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='↩Повернутися', callback_data='nazadvacc'),
-        telebot.types.InlineKeyboardButton(text='📲Меню', callback_data='menu')
-    )
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markupVacUrl)
+
+def locationVaccinationAstraZeneca(message):
+    cid = message.chat.id
+    with codecs.open('templates/LocationVaccination/Pfizer.html', 'r', encoding='UTF-8') as file:
+        template = Template(file.read())
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
 
 def locationVaccinationModerna(message):
     cid = message.chat.id
     with codecs.open('templates/LocationVaccination/Moderna.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
-    markupVacUrl = types.InlineKeyboardMarkup()
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='🏥 Сімейна поліклініка',
-                                           url='https://goo.gl/maps/hJZCqwLSjTSSK8xZ6'),
-        telebot.types.InlineKeyboardButton(text='🏥 3 поліклінічне відділення',
-                                           url='https://goo.gl/maps/xpkmx3nK6e5Pd8gf7'),
-        telebot.types.InlineKeyboardButton(text='🏥 Первична медича допомога (МАСАНИ)',
-                                           url='https://goo.gl/maps/sFfcZEeAifk89Ae37')
-    )
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='🏥 Первична медича допомога (ПОДУСОВКА)',
-                                           url='https://goo.gl/maps/MdBnwuApFYrDg1WH7'),
+    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
 
-    )
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='↩Повернутися', callback_data='nazadvacc'),
-        telebot.types.InlineKeyboardButton(text='📲Меню', callback_data='menu')
-    )
-    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markupVacUrl)
 
-def locationVaccinationAstraZeneca(message):
-    cid = message.chat.id
-    with codecs.open('templates/LocationVaccination/AstraZeneca.html', 'r', encoding='UTF-8') as file:
-        template = Template(file.read())
-    markupVacUrl = types.InlineKeyboardMarkup()
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='🏥 Сімейна поліклініка',
-                                           url='https://goo.gl/maps/hJZCqwLSjTSSK8xZ6'),
-        telebot.types.InlineKeyboardButton(text='🏥 3 поліклінічне відділення',
-                                           url='https://goo.gl/maps/xpkmx3nK6e5Pd8gf7'),
-        telebot.types.InlineKeyboardButton(text='🏥 Первична медича допомога (МАСАНИ)',
-                                           url='https://goo.gl/maps/sFfcZEeAifk89Ae37')
-    )
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='🏥 Первична медича допомога (ПОДУСОВКА)',
-                                           url='https://goo.gl/maps/MdBnwuApFYrDg1WH7'),
-
-    )
-    markupVacUrl.row(
-        telebot.types.InlineKeyboardButton(text='↩Повернутися', callback_data='nazadvacc'),
-        telebot.types.InlineKeyboardButton(text='📲Меню', callback_data='menu')
-    )
-    bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markupVacUrl)
 
 
 @bot.message_handler(commands=['countrylocationSend'])
-
+@send_action('typing')
+@save_user_activity()
 def countryLocationSend_command_handler(message):
     cid = message.chat.id
     markup1 = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -249,9 +369,11 @@ def countryLocationSend_command_handler(message):
     markup1.add(button_geo)
     bot.send_message(cid, 'Будь ласка, виберіть команди з меню', reply_markup=markup1)
 
+
 # geo command handler
 @bot.message_handler(content_types=['location'])
-
+@send_action('typing')
+@save_user_activity()
 def geo_command_handler(message):
     cid = message.chat.id
     geo_result = country_service.get_country_information(message.location.latitude, message.location.longitude)
@@ -261,7 +383,8 @@ def geo_command_handler(message):
 
 # country statistics command handler
 @bot.message_handler(func=lambda message: get_user_step(message.chat.id) == 1)
-
+@send_action('typing')
+@save_user_activity()
 def country_statistics_command_handler(message):
     country_name = message.text.strip()
     cid = message.chat.id
@@ -273,7 +396,8 @@ def country_statistics_command_handler(message):
     bot.send_message(cid, statistics, parse_mode='HTML')
 
 @bot.message_handler(func=lambda message: get_user_step(message.chat.id) == 1)
-
+@send_action('typing')
+@save_user_activity()
 def countrytest_statistics_command_handler(message, country_name):
     cid = message.chat.id
     try:
@@ -286,23 +410,32 @@ def countrytest_statistics_command_handler(message, country_name):
 
 # query statistics command handler
 @bot.message_handler(commands=['statistics'])
-
+@send_action('typing')
+@save_user_activity()
 def statistics_command_handler(message):
     cid = message.chat.id
     bot.send_message(cid, stats_service.get_statistics_of_users_queries(), parse_mode='HTML')
 
+
 # contacts command handler
 @bot.message_handler(commands=['contacts'])
-
+@send_action('typing')
+@save_user_activity()
 def contacts_command_handler(message):
     cid = message.chat.id
     with codecs.open('templates/contacts.html', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
         bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML')
 
+#######################
+
+
+#################################
+
 # help command handler
 @bot.message_handler(commands=['help'])
-
+@send_action('typing')
+@save_user_activity()
 def help_command_handler(message):
     cid = message.chat.id
     help_text = 'Команди які вміє бот \n'
@@ -312,9 +445,11 @@ def help_command_handler(message):
     help_text += 'Гарного користування ботом!!'
     bot.send_message(cid, help_text)
 
+
 # hi command handler
 @bot.message_handler(func=lambda message: message.text.lower() == 'hi')
-
+@send_action('typing')
+@save_user_activity()
 def hi_command_handler(message):
     cid = message.chat.id
     with codecs.open('templates/himydear.html', 'r', encoding='UTF-8') as file:
@@ -324,7 +459,8 @@ def hi_command_handler(message):
 
 # default text messages and hidden statistics command handler
 @bot.message_handler(func=lambda message: True, content_types=['text'])
-
+@send_action('typing')
+@save_user_activity()
 def default_command_handler(message):
     cid = message.chat.id
     if message.text[:int(os.getenv('PASS_CHAR_COUNT'))] == os.getenv('STAT_KEY'):
@@ -343,9 +479,16 @@ def default_command_handler(message):
             bot.send_message(cid, template.render(text_command=message.text), parse_mode='HTML')
 
 
+
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def query_handler(call):
-    bot.answer_callback_query(callback_query_id=call.id, text='Ви обрали команду!')
+    kb = types.InlineKeyboardMarkup()
+    cid = call.message.chat.id
+    mid = call.message.message_id
+    bot.answer_callback_query(callback_query_id=call.id, text='Ви обрали країну!')
+
     match call.data:
         case "1":
             help_command_handler(call.message)
@@ -356,27 +499,25 @@ def query_handler(call):
         case '4':
             start_command_handler(call.message)
         case "5":
-            country.country.countryLocation_command_handler(call.message)
+            countryLocation_command_handler(call.message)
         case "6":
             countryLocationSend_command_handler(call.message)
         case "7":
-            vacc.covid.helpCovidInformation_command_handler(call.message)
-        case '9':
+            helpCovidInformation_command_handler(call.message)
+        case "vac":
             locationVaccination(call.message)
         case "menu":
             menu_command_handler(call.message)
-        case "news":
-            vacc.covid.helpCovidNews_command_handler(call.message)
         case "Pfizer":
-            vacc.covid.helpcovidPfizer_command_handler(call.message)
+            helpcovidPfizer_command_handler(call.message)
         case "Coronavac":
-            vacc.covid.helpcovidCoronavac_command_handler(call.message)
+            helpcovidCoronavac_command_handler(call.message)
         case "Moderna":
-            vacc.covid.helpcovidModerna_command_handler(call.message)
+            helpcovidModerna_command_handler(call.message)
         case "AstraZeneca":
-            vacc.covid.helpcovidAstraZeneca_command_handler(call.message)
+            helpcovidAstraZeneca_command_handler(call.message)
         case "vaccination":
-            vacc.covid.helpCovidVaccination_command_handler(call.message)
+            helpCovidVaccination_command_handler(call.message)
         case "CoronavacVac":
             locationVaccinationCoronavac(call.message)
         case "PfizerVac":
@@ -385,26 +526,20 @@ def query_handler(call):
             locationVaccinationAstraZeneca(call.message)
         case "ModernaVac":
             locationVaccinationModerna(call.message)
-        case "nazadvacc":
-            locationVaccination(call.message)
-        case "nazadinfo":
-            vacc.covid.helpCovidInformation_command_handler(call.message)
         case "zones":
-            vacc.covid.helpCovidVZones_command_handler(call.message)
-        case "nazadzones":
-            vacc.covid.helpCovidVZones_command_handler(call.message)
+            helpCovidVZones_command_handler(call.message)
         case "symptoms":
-            vacc.covid.helpCovidSymptoms(call.message)
+            helpCovidSymptoms(call.message)
         case "green1":
-            vacc.covid.helpCovidVZonesGreen_command_handler(call.message)
+            helpCovidVZonesGreen_command_handler(call.message)
         case "yellow":
-            vacc.covid.helpCovidVZonesYellow_command_handler(call.message)
+            helpCovidVZonesYellow_command_handler(call.message)
         case "orange":
-            vacc.covid.helpCovidVZonesOrange_command_handler(call.message)
+            helpCovidVZonesOrange_command_handler(call.message)
         case 'red':
-            vacc.covid.helpCovidVZonesRed_command_handler(call.message)
+            helpCovidVZonesRed_command_handler(call.message)
         case "nazad":
-            vacc.covid.countryLocation_command_handler(call.message)
+            countryLocation_command_handler(call.message)
         case "sng":
             country.country.countryLocationSng_command_handler(call.message)
         case "europe":

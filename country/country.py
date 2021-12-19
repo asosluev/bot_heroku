@@ -50,27 +50,6 @@ def save_user_activity():
 @bot.message_handler(commands=['countryLocation'])
 @send_action('typing')
 @save_user_activity()
-def countryLocation_command_handler(message):
-    cid = message.chat.id
-    user_steps[cid] = 1
-    markup = telebot.types.InlineKeyboardMarkup()
-    markup.row(
-        telebot.types.InlineKeyboardButton(text='🗺Країни СНД', callback_data='sng'),
-        telebot.types.InlineKeyboardButton(text='🌍Європа ', callback_data='europe'),
-    )
-    markup.row(
-        telebot.types.InlineKeyboardButton(text='🌏Азія', callback_data='Asia'),
-        telebot.types.InlineKeyboardButton(text='🌍Африка', callback_data='Africa'),
-        #telebot.types.InlineKeyboardButton(text='Антарктида', callback_data='Antarctica'),
-    )
-    markup.row(telebot.types.InlineKeyboardButton(text='🌏Австралія і Океанія', callback_data='Australia'))
-    markup.row(telebot.types.InlineKeyboardButton(text='↩Назад', callback_data='menu'))
-    bot.send_message(cid, '{0}, Виберіть локацію зі списку по якій потрібна інформація'.format(message.chat.username), reply_markup=markup)
-
-
-@bot.message_handler(commands=['countryLocationSNG'])
-@send_action('typing')
-@save_user_activity()
 def countryLocationSng_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
