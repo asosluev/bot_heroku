@@ -823,6 +823,24 @@ def query_handler(call):
  #set web hook
 
 
+# set web hook
+server = Flask(__name__)
 
+
+@server.route('/' + token, methods=['POST'])
+def get_messages():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode('utf-8'))])
+    return '!', 200
+
+
+@server.route('/')
+def web_hook():
+    bot.remove_webhook()
+    bot.set_webhook(url=os.getenv('HEROKU_URL') + token)
+    return '!', 200
+
+
+# application entry point
 if __name__ == '__main__':
-    bot.polling(none_stop=True, interval=0)
+    threading.Thread(target=scheduler).start()
+    server.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
