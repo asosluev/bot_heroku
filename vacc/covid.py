@@ -14,11 +14,11 @@ def helpCovidInformation_command_handler(message):
         template = Template(file.read())
     mkinfo=telebot.types.InlineKeyboardMarkup()
     mkinfo.row(
-        telebot.types.InlineKeyboardButton(text='Вакцинація', callback_data='vaccination'),
-        telebot.types.InlineKeyboardButton(text='Зони', callback_data='zones'),
-        telebot.types.InlineKeyboardButton(text='Симптоми', callback_data='symptoms'),
-        telebot.types.InlineKeyboardButton(text='Новини',callback_data='news')
-    )
+        telebot.types.InlineKeyboardButton(text='💉Вакцинація', callback_data='vaccination'),
+        telebot.types.InlineKeyboardButton(text='🚫Зони', callback_data='zones'),
+        telebot.types.InlineKeyboardButton(text='🩸 Симптоми', callback_data='symptoms')
+           )
+    mkinfo.add( telebot.types.InlineKeyboardButton(text='♨ Новини',callback_data='news'))
     bot.send_message(cid,template.render(user_name=message.chat.username), parse_mode='HTML', reply_markup=mkinfo)
 
 @bot.message_handler(commands=['covidnews'])
@@ -29,10 +29,21 @@ def helpCovidNews_command_handler(message):
     markupurl = types.InlineKeyboardMarkup()
     btn_site_1 = types.InlineKeyboardButton(text='Obozrevatel →',
                                              url='https://www.obozrevatel.com/topic/koronavirus-2019-ncov/?_gl=1*v9fmcc*_ga*MTc4NzkxMTA1NC4xNjM5OTM3OTI4*_ga_JBX3X27G7H*MTYzOTkzNzkyNi4xLjEuMTYzOTkzNzk3OS4w&_ga=2.85707673.164119684.1639937960-1787911054.1639937928')
-    btn_site_2 = types.InlineKeyboardButton(text='OУкраинская правда →',
+    btn_site_2 = types.InlineKeyboardButton(text='Украинская правда →',
                                             url='https://www.pravda.com.ua/rus/tags/koronavirus/')
+    btn_site_3 = types.InlineKeyboardButton(text='ТСН →',
+                                            url='https://coronavirus.tsn.ua/')
+    btn_site_4 = types.InlineKeyboardButton(text='Цензор.NET →',
+                                            url='https://censor.net/ru/tag/9099/covid19/news/page/1')
     markupurl.add(btn_site_1)
     markupurl.add(btn_site_2)
+    markupurl.add(btn_site_3)
+    markupurl.add(btn_site_4)
+    markupg.row(
+        telebot.types.InlineKeyboardButton(text='↩Повернутися', callback_data='nazadinfo'),
+        telebot.types.InlineKeyboardButton(text='📲Меню', callback_data='menu')
+    )
+
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markupurl)
 
 
@@ -43,10 +54,10 @@ def helpCovidVaccination_command_handler(message):
         template = Template(file.read())
     markup = telebot.types.InlineKeyboardMarkup()
     markup.row(
-        telebot.types.InlineKeyboardButton(text='Pfizer', callback_data='Pfizer'),
-        telebot.types.InlineKeyboardButton(text='Coronavac', callback_data='Coronavac'),
-        telebot.types.InlineKeyboardButton(text='Moderna', callback_data='Moderna'),
-        telebot.types.InlineKeyboardButton(text='AstraZeneca', callback_data='AstraZeneca')
+        telebot.types.InlineKeyboardButton(text='💉Pfizer', callback_data='Pfizer'),
+        telebot.types.InlineKeyboardButton(text='💉Coronavac', callback_data='Coronavac'),
+        telebot.types.InlineKeyboardButton(text='💉Moderna', callback_data='Moderna'),
+        telebot.types.InlineKeyboardButton(text='💉AstraZeneca', callback_data='AstraZeneca')
     )
     bot.send_message(cid, template.render(user_name=message.chat.username), parse_mode='HTML',reply_markup=markup)
 

@@ -19,6 +19,7 @@ from flask import Flask, request
 
 #load_dotenv()
 
+
 # bot initialization
 token = os.getenv('API_BOT_TOKEN')
 bot = telebot.TeleBot(token)
@@ -77,7 +78,7 @@ def start_command_handler(message):
     markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакти!', callback_data=3))
     markup.add(telebot.types.InlineKeyboardButton(text='🌐Початок!🌐', callback_data=4))
     markup.add(telebot.types.InlineKeyboardButton(text='🔥Covid-19🔥', callback_data=7))
-    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data=9))
+    markup.add(telebot.types.InlineKeyboardButton(text='🏥Місце для Вакцинации', callback_data=9))
     markup.add(telebot.types.InlineKeyboardButton(text='📊 Вибір країни!🗺', callback_data=5))
     markup.add(telebot.types.InlineKeyboardButton(text='🧭Відправти геолокацію!', callback_data=6))
     bot.send_message(cid, 'Привіт, {0}, Виберіть команду з меню'.format(message.chat.username),reply_markup=markup)
@@ -93,7 +94,7 @@ def menu_command_handler(message):
     markup.add(telebot.types.InlineKeyboardButton(text='🎫Контакти!', callback_data=3))
     markup.add(telebot.types.InlineKeyboardButton(text='🌐Початок!🌐', callback_data=4))
     markup.add(telebot.types.InlineKeyboardButton(text='🔥Covid-19🔥', callback_data=7))
-    markup.add(telebot.types.InlineKeyboardButton(text='Місце для Вакцинации', callback_data=9))
+    markup.add(telebot.types.InlineKeyboardButton(text='🏥Місце для Вакцинации', callback_data=9))
     markup.add(telebot.types.InlineKeyboardButton(text='📊 Вибір країни!🗺', callback_data=5))
     markup.add(telebot.types.InlineKeyboardButton(text='🧭Відправти геолокацію!', callback_data=6))
     bot.send_message(cid, '{0}, Виберіть команду з меню'.format(message.chat.username), reply_markup=markup)
@@ -108,7 +109,7 @@ def country_command_handler(message):
 
 def locationVaccination(message):
     cid = message.chat.id
-    with codecs.open('templates/locationVaccination.html', 'r', encoding='UTF-8') as file:
+    with codecs.open('templates/locationVaccination.html.', 'r', encoding='UTF-8') as file:
         template = Template(file.read())
 
     markup = types.InlineKeyboardMarkup()
@@ -395,6 +396,8 @@ def query_handler(call):
             locationVaccinationModerna(call.message)
         case "nazadvacc":
             locationVaccination(call.message)
+        case "nazadinfo":
+            vacc.covid.helpCovidInformation_command_handler(call.message)
         case "zones":
             vacc.covid.helpCovidVZones_command_handler(call.message)
         case "nazadzones":
