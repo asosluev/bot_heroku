@@ -39,7 +39,7 @@ def helpCovidNews_command_handler(message):
     markupurl.add(btn_site_2)
     markupurl.add(btn_site_3)
     markupurl.add(btn_site_4)
-    markupg.row(
+    markupurl.row(
         telebot.types.InlineKeyboardButton(text='↩Повернутися', callback_data='nazadinfo'),
         telebot.types.InlineKeyboardButton(text='📲Меню', callback_data='menu')
     )
