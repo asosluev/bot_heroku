@@ -48,8 +48,7 @@ def save_user_activity():
 
 
 @bot.message_handler(commands=['countryLocation'])
-@send_action('typing')
-@save_user_activity()
+
 def countryLocationSng_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
@@ -82,8 +81,7 @@ def countryLocationSng_command_handler(message):
 
 #Europe
 @bot.message_handler(commands=['countryLocationEurope'])
-@send_action('typing')
-@save_user_activity()
+
 def countryLocationEurope_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
@@ -169,8 +167,7 @@ def countryLocationEurope_command_handler(message):
     bot.send_message(cid, '{0}, Виберіть країну Европи зі списку по якій потрібна інформація'.format(message.chat.username), reply_markup=markup)
 #Asia
 @bot.message_handler(commands=['countryLocationAsia'])
-@send_action('typing')
-@save_user_activity()
+
 def countryLocationAsia_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
@@ -269,8 +266,7 @@ def countryLocationAsia_command_handler(message):
 
 #Africa
 @bot.message_handler(commands=['countryLocationAfrica'])
-@send_action('typing')
-@save_user_activity()
+
 def countryLocationAfrica_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
@@ -374,8 +370,7 @@ def countryLocationAfrica_command_handler(message):
 
 #Aьукшсф
 @bot.message_handler(commands=['countryLocationAmerica'])
-@send_action('typing')
-@save_user_activity()
+
 def countryLocationAmerica_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
@@ -448,8 +443,7 @@ def countryLocationAmerica_command_handler(message):
 
 #Australia
 @bot.message_handler(commands=['countryLocationAustralia'])
-@send_action('typing')
-@save_user_activity()
+
 def countryLocationAustralia_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
