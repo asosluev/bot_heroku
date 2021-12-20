@@ -7,13 +7,13 @@ import codecs
 
 import common.tg_analytics as tga
 import country.country
-
+import vacc.covid
 from functools import wraps
 from telebot import types
 from jinja2 import Template
 from services.country_service import CountryService
 from services.statistics_service import StatisticsService
-from flask import Flask, request
+from flask import  request
 #from dotenv import load_dotenv
 
 #load_dotenv()
