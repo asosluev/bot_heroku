@@ -7,13 +7,13 @@ import codecs
 
 import common.tg_analytics as tga
 import country.country
-import vacc.covid
+
 from functools import wraps
 from telebot import types
 from jinja2 import Template
 from services.country_service import CountryService
 from services.statistics_service import StatisticsService
-from flask import Flask
+from flask import Flask, request
 #from dotenv import load_dotenv
 
 #load_dotenv()
@@ -70,7 +70,8 @@ def save_user_activity():
 
 # start command handler
 @bot.message_handler(commands=['start'])
-
+@send_action('typing')
+@save_user_activity()
 def start_command_handler(message):
     cid = message.chat.id
     markup = telebot.types.InlineKeyboardMarkup()
@@ -86,7 +87,8 @@ def start_command_handler(message):
 
 #menu
 @bot.message_handler(commands=['menu'])
-
+@send_action('typing')
+@save_user_activity()
 def menu_command_handler(message):
     cid = message.chat.id
     markup = telebot.types.InlineKeyboardMarkup()
@@ -101,7 +103,8 @@ def menu_command_handler(message):
     bot.send_message(cid, '{0}, Виберите команду из меню'.format(message.chat.username), reply_markup=markup)
 
 @bot.message_handler(commands=['country'])
-
+@send_action('typing')
+@save_user_activity()
 def country_command_handler(message):
     cid = message.chat.id
     user_steps[cid] = 1
@@ -109,6 +112,8 @@ def country_command_handler(message):
 
 # countryLocation command handler
 @bot.message_handler(commands=['countryLocation'])
+@send_action('typing')
+@save_user_activity()
 
 def countryLocation_command_handler(message):
     cid = message.chat.id
@@ -133,7 +138,8 @@ def countryLocation_command_handler(message):
 
 
 @bot.message_handler(commands=['helpCovidInformation'])
-
+@send_action('typing')
+@save_user_activity()
 def helpCovidInformation_command_handler(message):
     cid =message.chat.id
     mkinfo=telebot.types.InlineKeyboardMarkup()
@@ -145,7 +151,8 @@ def helpCovidInformation_command_handler(message):
     bot.send_message(cid, '{0}, Виберите команду из меню'.format(message.chat.username), reply_markup=mkinfo)
 
 @bot.message_handler(commands=['helpcovid'])
-
+@send_action('typing')
+@save_user_activity()
 def helpCovidVaccination_command_handler(message):
     cid = message.chat.id
     with codecs.open('templates/helpcovid1.html', 'r', encoding='UTF-8') as file:
@@ -353,7 +360,8 @@ def locationVaccinationModerna(message):
 
 
 @bot.message_handler(commands=['countrylocationSend'])
-
+@send_action('typing')
+@save_user_activity()
 def countryLocationSend_command_handler(message):
     cid = message.chat.id
     markup1 = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -364,7 +372,8 @@ def countryLocationSend_command_handler(message):
 
 # geo command handler
 @bot.message_handler(content_types=['location'])
-
+@send_action('typing')
+@save_user_activity()
 def geo_command_handler(message):
     cid = message.chat.id
     geo_result = country_service.get_country_information(message.location.latitude, message.location.longitude)
@@ -374,7 +383,8 @@ def geo_command_handler(message):
 
 # country statistics command handler
 @bot.message_handler(func=lambda message: get_user_step(message.chat.id) == 1)
-
+@send_action('typing')
+@save_user_activity()
 def country_statistics_command_handler(message):
     country_name = message.text.strip()
     cid = message.chat.id
@@ -386,7 +396,8 @@ def country_statistics_command_handler(message):
     bot.send_message(cid, statistics, parse_mode='HTML')
 
 @bot.message_handler(func=lambda message: get_user_step(message.chat.id) == 1)
-
+@send_action('typing')
+@save_user_activity()
 def countrytest_statistics_command_handler(message, country_name):
     cid = message.chat.id
     try:
@@ -399,7 +410,8 @@ def countrytest_statistics_command_handler(message, country_name):
 
 # query statistics command handler
 @bot.message_handler(commands=['statistics'])
-
+@send_action('typing')
+@save_user_activity()
 def statistics_command_handler(message):
     cid = message.chat.id
     bot.send_message(cid, stats_service.get_statistics_of_users_queries(), parse_mode='HTML')
@@ -407,7 +419,8 @@ def statistics_command_handler(message):
 
 # contacts command handler
 @bot.message_handler(commands=['contacts'])
-
+@send_action('typing')
+@save_user_activity()
 def contacts_command_handler(message):
     cid = message.chat.id
     with codecs.open('templates/contacts.html', 'r', encoding='UTF-8') as file:
@@ -421,7 +434,8 @@ def contacts_command_handler(message):
 
 # help command handler
 @bot.message_handler(commands=['help'])
-
+@send_action('typing')
+@save_user_activity()
 def help_command_handler(message):
     cid = message.chat.id
     help_text = 'Команди які вміє бот \n'
@@ -434,7 +448,8 @@ def help_command_handler(message):
 
 # hi command handler
 @bot.message_handler(func=lambda message: message.text.lower() == 'hi')
-
+@send_action('typing')
+@save_user_activity()
 def hi_command_handler(message):
     cid = message.chat.id
     with codecs.open('templates/himydear.html', 'r', encoding='UTF-8') as file:
@@ -444,7 +459,8 @@ def hi_command_handler(message):
 
 # default text messages and hidden statistics command handler
 @bot.message_handler(func=lambda message: True, content_types=['text'])
-
+@send_action('typing')
+@save_user_activity()
 def default_command_handler(message):
     cid = message.chat.id
     if message.text[:int(os.getenv('PASS_CHAR_COUNT'))] == os.getenv('STAT_KEY'):
@@ -959,4 +975,5 @@ def web_hook():
 
 # application entry point
 if __name__ == '__main__':
+    threading.Thread(target=scheduler).start()
     server.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
